@@ -104,19 +104,21 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     """
     # TODO: Implement function
     sess.run(tf.global_variables_initializer())
+    i = 0
     for epoch in range(epochs):
-      for i, (batch_xs, batch_ys) in enumerate(get_batches_fn(batch_size)):
-        feed_dict = {
-          input_image: batch_xs,
-          correct_label: batch_ys,
-          keep_prob: 0.85,
-          learning_rate: 0.001
-        }
-        sess.run(train_op, feed_dict=feed_dict)
+        for batch_xs, batch_ys in get_batches_fn(batch_size):
+            feed_dict = {
+                input_image: batch_xs,
+                correct_label: batch_ys,
+                keep_prob: 0.85,
+                learning_rate: 0.001
+            }
+            sess.run(train_op, feed_dict=feed_dict)
 
-        if i % 10 == 0:
-          loss = sess.run([cross_entropy_loss], feed_dict=feed_dict)
-          print("[{}, {}], loss: {}".format(epoch, i, loss))
+            if i % 10 == 0:
+                loss = sess.run(cross_entropy_loss, feed_dict=feed_dict)
+                print("Epoch:{} Iteration:{} Loss:{}".format(epoch, i, loss))
+            i += 1
     
 tests.test_train_nn(train_nn)
 
@@ -153,7 +155,7 @@ def run():
 
         # TODO: Train NN using the train_nn function
         epochs = 20
-        batch_size = 1
+        batch_size = 10
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image, correct_label, keep_prob, learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
